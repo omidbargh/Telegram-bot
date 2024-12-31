@@ -52,7 +52,7 @@ async def inventory(update: Update, context):
 
 # تابع ثبت خرید جدید
 async def buy_new(update: Update, context):
-    await update.callback_query.answer()
+    await update.callback_query.answer()  # ضروری برای جلوگیری از "loading"
     await update.callback_query.edit_message_text("لطفاً سایز لاستیک را وارد کنید:")
 
 # تابع دریافت سایز لاستیک
@@ -105,6 +105,19 @@ async def sell(update: Update, context):
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text("لطفاً سایز لاستیک مورد نظر برای فروش را انتخاب کنید:", reply_markup=reply_markup)
 
+# تابع مدیریت کال بک‌ها (در اینجا انتخاب دکمه‌ها)
+async def button(update: Update, context):
+    query = update.callback_query
+    await query.answer()
+
+    # واکنش به انتخاب‌های مختلف دکمه‌ها
+    if query.data == "buy_new":
+        await buy_new(update, context)
+    elif query.data == "inventory":
+        await inventory(update, context)
+    elif query.data == "sell":
+        await sell(update, context)
+
 # تابع اصلی
 def main():
     # ساخت پایگاه داده و جدول
@@ -124,6 +137,9 @@ def main():
     application.add_handler(buy_new_handler)
     application.add_handler(sell_handler)
     application.add_handler(inventory_handler)
+
+    # مدیریت CallbackQuery
+    application.add_handler(CallbackQueryHandler(button))
 
     # مدیریت دریافت سایز، قیمت و تعداد
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, get_size))
