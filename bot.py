@@ -1,34 +1,31 @@
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-from dotenv import load_dotenv
+from telegram.ext import Application, CommandHandler, MessageHandler, filters
+from telegram import Update
+import logging
 import os
+from dotenv import load_dotenv
 
+# بارگذاری توکن ربات از فایل .env
 load_dotenv()
+TOKEN = "8068884649:AAFeNF1cV2orXyd9JZn8RyEPcZr8oW4lBAQ"
 
-TOKEN = "8068884649:AAFeNF1cV2orXyd9JZn8RyEPcZr8oW4lBAQ"  # توکن شما
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-updater = Updater(TOKEN)
-dispatcher = updater.dispatcher
+# تابع شروع ربات
+async def start(update: Update, context):
+    await update.message.reply_text("سلام! من ربات شما هستم.")
 
-def start(update, context):
-    update.message.reply_text('سلام! من ربات شما هستم.')
+# تنظیمات ربات و دستورات
+def main():
+    # ساخت اپلیکیشن با توکن ربات
+    application = Application.builder().token(TOKEN).build()
 
-def help(update, context):
-    update.message.reply_text('دستورات من: /start, /help, /buy, /sell')
+    # تعریف دستورات ربات
+    start_handler = CommandHandler("start", start)
+    application.add_handler(start_handler)
 
-def buy(update, context):
-    update.message.reply_text('دستور خرید ثبت شد.')
+    application.run_polling()
 
-def sell(update, context):
-    update.message.reply_text('دستور فروش ثبت شد.')
-
-def inventory(update, context):
-    update.message.reply_text('موجودی انبار: ...')
-
-dispatcher.add_handler(CommandHandler('start', start))
-dispatcher.add_handler(CommandHandler('help', help))
-dispatcher.add_handler(CommandHandler('buy', buy))
-dispatcher.add_handler(CommandHandler('sell', sell))
-dispatcher.add_handler(CommandHandler('inventory', inventory))
-
-updater.start_polling()
-updater.idle()
+if __name__ == '__main__':
+    main()
