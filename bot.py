@@ -2,7 +2,6 @@ import sqlite3
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler, filters
 import logging
-import os
 from dotenv import load_dotenv
 
 # بارگذاری توکن ربات از فایل .env
@@ -76,14 +75,14 @@ async def temp_inventory(update: Update, context):
 
 # تابع ثبت خرید جدید
 async def buy_new(update: Update, context):
-    await update.callback_query.answer()  # ضروری برای جلوگیری از "loading"
+    await update.callback_query.answer()  # جلوگیری از نمایش loading
     await update.callback_query.edit_message_text("لطفاً سایز لاستیک را وارد کنید:")
 
 # دریافت سایز لاستیک
 async def get_size(update: Update, context):
     size = update.message.text
     context.user_data['size'] = size
-    await update.message.reply_text(f"شما سایز {size} را وارد کرده‌اید. حالا لطفاً قیمت لاستیک را وارد کنید:")
+    await update.message.reply_text(f"سایز {size} وارد شد. حالا لطفاً قیمت لاستیک را وارد کنید:")
 
 # دریافت قیمت لاستیک
 async def get_price(update: Update, context):
@@ -91,7 +90,7 @@ async def get_price(update: Update, context):
         price = float(update.message.text)
         size = context.user_data['size']
         context.user_data['price'] = price
-        await update.message.reply_text(f"شما قیمت {price} را برای سایز {size} وارد کرده‌اید. حالا لطفاً تعداد لاستیک را وارد کنید:")
+        await update.message.reply_text(f"قیمت {price} وارد شد. حالا لطفاً تعداد لاستیک را وارد کنید:")
     except ValueError:
         await update.message.reply_text("لطفاً قیمت را به درستی وارد کنید.")
 
